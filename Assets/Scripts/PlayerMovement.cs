@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -14,21 +15,68 @@ public class PlayerMovement : MonoBehaviour
     [Header ("Movement and rotation")]
     [SerializeField] private float speed;
     [SerializeField] private float rotationSpeed;
+    bool isMoving;
 
     [Header("Gravity")]
     [SerializeField] private float gravityScale;
 
+    [Header("NavMeshAgent")]
+    [SerializeField] private LayerMask accesableArea;
+    private NavMeshAgent navMeshAgent;
+    private RaycastHit destinationInfo;
+    private const float minDistance = 0.25f;
+
     private void Awake()
     {
         animator = FindObjectOfType<Animator>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
     }
 
 
     private void Update()
     {
-        Rotate();
-        Move();
+        if (Input.GetMouseButtonDown(0))
+        {
+            isMoving = true;
+            FindPath();
+        }
 
+        Debug.Log(destinationInfo.point);
+        IsPlayerMoving();
+        //Rotate();
+        //Move();
+
+    }
+
+    private void FindPath()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        var moveDirection = ray.direction.normalized;
+
+        if (Physics.Raycast(ray, out destinationInfo, Mathf.Infinity, accesableArea))
+        {
+            navMeshAgent.SetDestination(destinationInfo.point);
+        }
+
+    }
+
+    private void IsPlayerMoving()
+    {
+        if (Vector3.Distance(transform.position, destinationInfo.point) <= minDistance)
+        {
+            Debug.Log(Vector3.Distance(transform.position, destinationInfo.point));
+            isMoving = false;
+        }
+
+        if (isMoving)
+        {
+            animator.SetBool(isWalkingBoolName, true);
+        }
+        else
+        {
+            animator.SetBool(isWalkingBoolName, false);
+        }
     }
 
     private void Move()
@@ -53,6 +101,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
         moveDirection.y = Physics.gravity.y;
+
+
         characterController.Move(moveDirection * (speed * Time.deltaTime));
     }
 
