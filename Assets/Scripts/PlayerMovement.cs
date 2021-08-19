@@ -5,26 +5,26 @@ using UnityEngine.AI;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private CharacterController characterController;
-
     [Header("Animator")]
     [SerializeField] private Animator animator;
     [SerializeField] private string isWalkingBoolName;
-    [SerializeField] private string isRuningBoolName;
-
-    [Header ("Movement and rotation")]
-    [SerializeField] private float speed;
-    [SerializeField] private float rotationSpeed;
-    bool isMoving;
-
-    [Header("Gravity")]
-    [SerializeField] private float gravityScale;
+    [SerializeField] private string isRunningBoolName;
 
     [Header("NavMeshAgent")]
     [SerializeField] private LayerMask accesableArea;
+    [SerializeField] private float runningSpeed;
+    [SerializeField] private float walkingSpeed;
     private NavMeshAgent navMeshAgent;
     private RaycastHit destinationInfo;
     private const float minDistance = 0.25f;
+
+    [Header("Double click cheker")]
+    private const float timeBetweenClicks = 0.2f;
+    private float firstClickTime = 0f;
+    private bool isCoroutineDenied;
+    private int clickCounter;
+
+    private bool isMoving;
 
     private void Awake()
     {
@@ -32,6 +32,10 @@ public class PlayerMovement : MonoBehaviour
         navMeshAgent = GetComponent<NavMeshAgent>();
     }
 
+    private void Start()
+    {
+        clickCounter = 0;
+    }
 
     private void Update()
     {
@@ -41,11 +45,17 @@ public class PlayerMovement : MonoBehaviour
             FindPath();
         }
 
-        Debug.Log(destinationInfo.point);
-        IsPlayerMoving();
-        //Rotate();
-        //Move();
+        if (Input.GetMouseButtonUp(0))
+        {
+            clickCounter++;
+        }
 
+        if(clickCounter==1 && !isCoroutineDenied)
+        {
+            CheckForSecondClick();
+        }
+
+        CheckForPlayerMovement();
     }
 
     private void FindPath()
@@ -61,11 +71,16 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    private void IsPlayerMoving()
+    private void CheckForSecondClick()
+    {
+        firstClickTime = Time.time;
+        StartCoroutine(OnDoubleClick());
+    }
+
+    private void CheckForPlayerMovement()
     {
         if (Vector3.Distance(transform.position, destinationInfo.point) <= minDistance)
         {
-            Debug.Log(Vector3.Distance(transform.position, destinationInfo.point));
             isMoving = false;
         }
 
@@ -73,45 +88,31 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.SetBool(isWalkingBoolName, true);
         }
-        else
+        else if(!isMoving)
         {
             animator.SetBool(isWalkingBoolName, false);
+            animator.SetBool(isRunningBoolName, false);
+            navMeshAgent.speed = walkingSpeed;
         }
     }
 
-    private void Move()
+    private IEnumerator OnDoubleClick()
     {
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
-
-        var moveDirection = transform.forward * moveVertical + transform.right * moveHorizontal;
-
-        if (moveVertical > 0f)
+        isCoroutineDenied = true;
+        while (Time.time < firstClickTime + timeBetweenClicks)
         {
-            animator.SetBool(isWalkingBoolName, true);
-        }
-        else if (moveVertical == 0f)
-        {
-            animator.SetBool(isWalkingBoolName, false);
+            if (clickCounter == 2)
+            {
+                animator.SetBool(isRunningBoolName, true);
+                navMeshAgent.speed = runningSpeed;
+            }
+
+            yield return new WaitForEndOfFrame();
         }
 
-        if (moveDirection.magnitude > 1f)
-        {
-            moveDirection.Normalize();
-        }
-
-        moveDirection.y = Physics.gravity.y;
-
-
-        characterController.Move(moveDirection * (speed * Time.deltaTime));
-    }
-
-    private void Rotate()
-    {
-        var h = Input.GetAxis("Mouse X");
-
-        transform.Rotate(Vector3.up, rotationSpeed*h*Time.deltaTime);
-
+        clickCounter = 0;
+        firstClickTime = 0f;
+        isCoroutineDenied = false;
     }
 
 }
