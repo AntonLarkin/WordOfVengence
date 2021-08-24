@@ -6,12 +6,12 @@ using UnityEngine.AI;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private CameraRaycast cameraRaycast;
+    [SerializeField] PlayerAttack playerAttack;
 
     [Header("Animator")]
     private Animator animator;
     [SerializeField] private string isWalkingBoolName;
     [SerializeField] private string isRunningBoolName;
-    [SerializeField] private string isAttackingBoolName;
 
     [Header("NavMeshAgent")]
     [SerializeField] private LayerMask accesableArea;
@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float walkingSpeed;
     private NavMeshAgent navMeshAgent;
     private RaycastHit destinationInfo;
-    private float minDistance = 0.25f;
+    private const float minDistance = 0.25f;
 
     [Header("Double click cheker")]
     private const float timeBetweenClicks = 0.2f;
@@ -29,7 +29,6 @@ public class PlayerMovement : MonoBehaviour
     private int clickCounter;
 
     private bool isMoving;
-    private bool isAttacking;
 
     private void Awake()
     {
@@ -40,20 +39,19 @@ public class PlayerMovement : MonoBehaviour
     {
         cameraRaycast.OnPlayerMove += CameraRaycast_OnPlayerMove;
         cameraRaycast.OnPlayerStop += CameraRaycast_OnPlayerStop;
-        cameraRaycast.OnPlayerAttack += CameraRaycast_OnPlayerAttack;
     }
 
     private void OnDisable()
     {
         cameraRaycast.OnPlayerMove -= CameraRaycast_OnPlayerMove;
         cameraRaycast.OnPlayerStop -= CameraRaycast_OnPlayerStop;
-        cameraRaycast.OnPlayerAttack -= CameraRaycast_OnPlayerAttack;
     }
 
     private void Start()
     {
         clickCounter = 0;
         navMeshAgent = GetComponent<NavMeshAgent>();
+        playerAttack = GetComponent<PlayerAttack>();
         animator = GetComponentInChildren<Animator>();
     }
 
@@ -72,24 +70,6 @@ public class PlayerMovement : MonoBehaviour
         CheckForPlayerMovement();
     }
 
-    /*private void FindPath()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        var moveDirection = ray.direction.normalized;
-
-        if (Physics.Raycast(ray, out destinationInfo, Mathf.Infinity, unaccesableArea))
-        {
-            isMoving = false;
-            return;
-        }
-        else if (Physics.Raycast(ray, out destinationInfo, Mathf.Infinity, accesableArea))
-        {
-            isMoving = true;
-            navMeshAgent.SetDestination(destinationInfo.point);
-        }
-    }*/
-
     private void CheckForSecondClick()
     {
         firstClickTime = Time.time;
@@ -101,22 +81,17 @@ public class PlayerMovement : MonoBehaviour
         if (Vector3.Distance(transform.position, destinationInfo.point) <= minDistance)
         {
             isMoving = false;
-            isAttacking = false;
         }
 
         if (isMoving)
         {
             animator.SetBool(isWalkingBoolName, true);
         }
-        else if (isAttacking)
-        {
-            animator.SetBool(isAttackingBoolName, true);
-        }
-        else if(!isMoving||!isAttacking)
+
+        else if(!isMoving)
         {
             animator.SetBool(isWalkingBoolName, false);
             animator.SetBool(isRunningBoolName, false);
-            animator.SetBool(isAttackingBoolName, false);
             navMeshAgent.speed = walkingSpeed;
         }
     }
@@ -153,17 +128,6 @@ public class PlayerMovement : MonoBehaviour
 
         isMoving = true;
         navMeshAgent.SetDestination(destinationInfo.point);
-    }
-
-    private void CameraRaycast_OnPlayerAttack(Vector3 endPosition)
-    {
-        destinationInfo.point = endPosition;
-
-        
-        navMeshAgent.stoppingDistance = minDistance-1f;
-        isAttacking = true;
-        navMeshAgent.SetDestination(destinationInfo.point);
-
     }
 
     private void CameraRaycast_OnPlayerStop()

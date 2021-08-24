@@ -22,7 +22,6 @@ public class CameraRaycast : MonoBehaviour
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            var moveDirection = ray.direction.normalized;
             if (Physics.Raycast(ray, out destinationInfo, Mathf.Infinity, unaccesableArea))
             {
                 OnPlayerStop?.Invoke();
