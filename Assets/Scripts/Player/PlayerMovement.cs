@@ -6,7 +6,6 @@ using UnityEngine.AI;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private CameraRaycast cameraRaycast;
-    [SerializeField] PlayerAttack playerAttack;
 
     [Header("Animator")]
     private Animator animator;
@@ -51,7 +50,6 @@ public class PlayerMovement : MonoBehaviour
     {
         clickCounter = 0;
         navMeshAgent = GetComponent<NavMeshAgent>();
-        playerAttack = GetComponent<PlayerAttack>();
         animator = GetComponentInChildren<Animator>();
     }
 
