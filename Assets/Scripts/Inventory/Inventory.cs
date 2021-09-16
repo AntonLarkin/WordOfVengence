@@ -13,12 +13,16 @@ public class Inventory : MonoBehaviour
 
     public event Action<Item> OnItemRightClickEvent;
 
-    private void Awake()
+    private void OnEnable()
     {
         for(int i = 0; i < itemSlots.Length; i++)
         {
-            itemSlots[i].OnRightClickEvent += OnItemRightClickEvent;
+            itemSlots[i].OnRightClickEvent += InvokeOnItemRightClickEvent;
         }
+    }
+    private void Start()
+    {
+        UpdateUIInventory();
     }
 
     private void OnValidate()
@@ -27,10 +31,12 @@ public class Inventory : MonoBehaviour
         {
             itemSlots = itemsParent.GetComponentsInChildren<ItemSlot>();
         }
-
-        UpdateUIInventory();
     }
 
+    private void InvokeOnItemRightClickEvent(Item item)
+    {
+        OnItemRightClickEvent?.Invoke(item);
+    }
     private void UpdateUIInventory()
     {
         int i = 0;

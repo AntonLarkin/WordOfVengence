@@ -80,6 +80,8 @@ public abstract class BaseBandit : BaseHuman
 
     #endregion
 
+    public event Action<BaseBandit> OnBanditDie;
+
     protected virtual void Awake()
     {
         stateMachine = new BanditStateMachine();
@@ -106,6 +108,7 @@ public abstract class BaseBandit : BaseHuman
         {
             Die();
             isAlive = false;
+            OnBanditDie?.Invoke(this);
         }
 
     }

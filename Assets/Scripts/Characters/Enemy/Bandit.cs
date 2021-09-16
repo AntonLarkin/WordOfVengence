@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class Bandit : BaseBandit
 {
+ 
     protected override void Update()
     {
         base.Update();

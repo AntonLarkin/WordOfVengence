@@ -8,14 +8,19 @@ public class EquipmentPanel : MonoBehaviour
     [SerializeField] private Transform equipmentSlotsParent;
     [SerializeField] private EquipmentSlot[] equipmentSlots;
 
-    public event Action<Item> onItemRightClickEvent;
+    public event Action<Item> OnItemRightClickEvent;
 
-    private void Awake()
+    private void OnEnable()
     {
         for (int i = 0; i < equipmentSlots.Length; i++)
         {
-            equipmentSlots[i].OnRightClickEvent += onItemRightClickEvent;
+            equipmentSlots[i].OnRightClickEvent += InvokeOnItemRightClickEvent;
         }
+    }
+
+    private void  InvokeOnItemRightClickEvent(Item item)
+    {
+        OnItemRightClickEvent?.Invoke(item);
     }
 
     private void OnValidate()

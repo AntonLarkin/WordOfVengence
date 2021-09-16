@@ -4,10 +4,14 @@ using UnityEngine;
 
 public abstract class BaseHuman : MonoBehaviour
 {
+
+    [SerializeField] protected int id;
+
     [Header("BaseCharacteristics")]
     [SerializeField] protected float maxHealth;
     [SerializeField] protected float maxStamina;
 
+    public int ID => id;
     public float MaxHealth => maxHealth;
     public float MaxStamina => maxStamina;
 
