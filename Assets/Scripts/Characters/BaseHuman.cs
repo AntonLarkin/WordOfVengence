@@ -15,13 +15,21 @@ public abstract class BaseHuman : MonoBehaviour
     public float MaxHealth => maxHealth;
     public float MaxStamina => maxStamina;
 
-    public float CurrentHealth { get; private set; }
-    public float CurrentStamina { get; private set; }
+    public float CurrentHealth { get; protected set; }
+    public float CurrentStamina { get; protected set; }
 
     protected virtual void Start()
     {
         CurrentHealth = maxHealth;
         CurrentStamina = maxStamina;
+    }
+
+    protected virtual void Update()
+    {
+        if (CurrentHealth > maxHealth)
+        {
+            CurrentHealth = maxHealth;
+        }
     }
 
     public void TakeDamage(float damage)
@@ -33,6 +41,17 @@ public abstract class BaseHuman : MonoBehaviour
         CurrentHealth -= damage;
     }
 
+    public void TakeStaminaExhaustion(float exhaustionValue)
+    {
+        if (CurrentStamina <= 0)
+        {
+            return;
+        }
+        CurrentStamina = maxStamina - exhaustionValue;
+    }
+
     protected abstract void Die();
+
+
 
 }

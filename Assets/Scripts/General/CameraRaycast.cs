@@ -12,14 +12,27 @@ public class CameraRaycast : MonoBehaviour
 
     private RaycastHit destinationInfo;
 
+    private bool isRaicastingActive = true;
+
     public event Action<Vector3> OnPlayerMove;
     public event Action OnPlayerStop;
     public event Action<Vector3> OnPlayerInteract;
     public event Action<Vector3> OnPlayerAttack;
 
+    private void OnEnable()
+    {
+        UiManager.OnOpenInventory += UiManager_OnOpenInventory;
+        UiManager.OnClosedInventory += UiManager_OnClosedInventory;
+    }
+    private void OnDisable()
+    {
+        UiManager.OnOpenInventory -= UiManager_OnOpenInventory;
+        UiManager.OnClosedInventory -= UiManager_OnClosedInventory;
+    }
+
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0)&&isRaicastingActive)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -45,6 +58,15 @@ public class CameraRaycast : MonoBehaviour
 
         }
 
+    }
+
+    private void UiManager_OnOpenInventory()
+    {
+        isRaicastingActive = false;
+    }
+    private void UiManager_OnClosedInventory()
+    {
+        isRaicastingActive = true;
     }
 
 }

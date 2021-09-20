@@ -59,6 +59,10 @@ public class StatDisplay : MonoBehaviour , IPointerEnterHandler, IPointerExitHan
     {
         valueText.text = _stat.Value.ToString();
     }
+    public float ReturnValue()
+    {
+        return _stat.Value;
+    }
 
     public void OnPointerEnter(PointerEventData eventData)
     {

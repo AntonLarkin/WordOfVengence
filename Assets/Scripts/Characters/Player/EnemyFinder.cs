@@ -14,10 +14,10 @@ public class EnemyFinder : MonoBehaviour
 
     public BaseBandit ClosestBandit => closestBandit;
 
-    private void Start()
+    private void OnValidate()
     {
-        player = FindObjectOfType<Player>();
         DetectEnemiesOnLevel();
+        player = FindObjectOfType<Player>();
     }
 
     private void Update()
@@ -87,63 +87,24 @@ public class EnemyFinder : MonoBehaviour
 
     private void UpdateClosestDistance()
     {
-        closestEnemyDistance = Vector3.Distance(transform.position, ClosestBandit.CachedTransform.position);
-
-        foreach (BaseBandit bandit in bandits)
+        if (bandits != null)
         {
-            var distance = Vector3.Distance(transform.position, bandit.CachedTransform.position);
+            closestEnemyDistance = Vector3.Distance(transform.position, ClosestBandit.CachedTransform.position);
 
-            if (distance <= closestEnemyDistance && bandit.CurrentHealth > 0)
+            foreach (BaseBandit bandit in bandits)
             {
-                closestBandit = bandit;
-                closestEnemyDistance = distance;
+                var distance = Vector3.Distance(transform.position, bandit.CachedTransform.position);
 
-                player.SetPlayerAgressive(true);
+                if (distance <= closestEnemyDistance && bandit.CurrentHealth > 0)
+                {
+                    closestBandit = bandit;
+                    closestEnemyDistance = distance;
+
+                    player.SetPlayerAgressive(true);
+                }
+
             }
-
         }
     }
 
-
-
-    //private void CheckForEnemies()
-    //{
-    //    if (bandits.Length > 0)
-    //    {
-    //        foreach (BaseBandit bandit in bandits)
-    //        {
-    //            if (Vector3.Distance(transform.position, bandit.transform.position) <= triggerDistance)
-    //            {
-    //                if (Vector3.Distance(transform.position, bandit.transform.position) <= attackDistance && !IsEscaping)
-    //                {
-    //                    SetArgessive(true);
-    //                    Debug.Log("trying to escape");
-    //                    currentBandit = bandit;
-    //                    if (currentBandit.CurrentHealth > 0)
-    //                    {
-    //                        Debug.Log(CurrentBandit);
-    //                        stateMachine.SetState(new PlayerAttackState(this, stateMachine));
-    //                    }
-    //                    else
-    //                    {
-    //                        currentBandit = null;
-    //                    }
-
-    //                }
-    //                else
-    //                {
-    //                    SetArgessive(true);
-    //                    stateMachine.SetState(new PlayerAgressiveState(this, stateMachine));
-    //                }
-
-    //            }
-    //            else
-    //            {
-    //                stateMachine.SetState(new PlayerMovingState(this, stateMachine));
-    //                SetArgessive(false);
-    //            }
-    //        }
-    //    }
-
-    //}
 }

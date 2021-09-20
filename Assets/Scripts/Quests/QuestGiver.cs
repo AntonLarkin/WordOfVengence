@@ -4,38 +4,55 @@ using UnityEngine;
 
 public class QuestGiver : MonoBehaviour
 {
-    [SerializeField] private GameObject quests;
-    [SerializeField] private string questType;
+    [SerializeField] private GameObject triggerText;
+    [SerializeField] private GameObject DialogObject;
 
-    public Quest Quest { get; set; }
-    public bool AssignedQuest { get; set; }
-    public bool QuestFinished { get; set; }
-    private void Interract()
+    private Dialog dialog;
+    private bool isTalking;
+
+    private void Start()
     {
-        if(!AssignedQuest && !QuestFinished)
+        dialog = GetComponent<Dialog>();
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag(Tags.Player))
         {
-            AssignQuest();
-        }
-        else if (AssignedQuest && !QuestFinished)
-        {
-            CheckQuest();
+            if (!isTalking)
+            {
+                triggerText.SetActive(true);
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    isTalking = true;
+                    triggerText.SetActive(false);
+                    DialogObject.SetActive(true);
+                    dialog.StartDialogue();
+                }
+            }
+            if (dialog.IsDialogFinished)
+            {
+                triggerText.SetActive(false);
+                isTalking = false;
+                DialogObject.SetActive(false);
+                dialog.ClearText();
+                triggerText.SetActive(true);
+            }
+            
         }
     }
 
-    private void AssignQuest()
+    private void OnTriggerExit(Collider other)
     {
-        AssignedQuest = true;
-        Quest = (Quest)quests.AddComponent(System.Type.GetType(questType));
-        
+        triggerText.SetActive(false);
+        isTalking = false;
+        DialogObject.SetActive(false);
+        dialog.ClearText();
+
     }
 
-    private void CheckQuest()
+    private void EnableDialogueWindow(bool isDialogActive)
     {
-        if (Quest.IsCompleted)
-        {
-            QuestFinished = true;
-            AssignedQuest = false;
-        }
-    }
 
+    }
 }

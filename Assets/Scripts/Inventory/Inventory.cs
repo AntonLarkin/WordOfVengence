@@ -1,28 +1,41 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using System;
 
 public class Inventory : MonoBehaviour
 {
-    [SerializeField] private List<Item> items;
+    [SerializeField] private List<Item> startingItems;
     [SerializeField] private Transform itemsParent;
     [SerializeField] private ItemSlot[] itemSlots;
 
     private bool IsFull;
 
-    public event Action<Item> OnItemRightClickEvent;
+    public event Action<ItemSlot> OnItemRightClickEvent;
+    public event Action<ItemSlot> OnItemPointerEnterEvent;
+    public event Action<ItemSlot> OnItemPointerExitEvent;
+    public event Action<ItemSlot> OnItemBeginDragEvent;
+    public event Action<ItemSlot> OnItemEndDragEvent;
+    public event Action<ItemSlot> OnItemDragEvent;
+    public event Action<ItemSlot> OnItemDropEvent;
 
     private void OnEnable()
     {
         for(int i = 0; i < itemSlots.Length; i++)
         {
             itemSlots[i].OnRightClickEvent += InvokeOnItemRightClickEvent;
+            itemSlots[i].OnPointerEnterEvent += InvokeOnItemPointerEnterEvent;
+            itemSlots[i].OnPointerExitEvent += InvokeOnItemPointerExitEvent;
+            itemSlots[i].OnBeginDragEvent += InvokeOnItemBeginDragEvent;
+            itemSlots[i].OnEndDragEvent += InvokeOnItemEndDragEvent;
+            itemSlots[i].OnDragEvent += InvokeOnItemDragEvent;
+            itemSlots[i].OnDropEvent += InvokeOnItemDropEvent;
         }
     }
     private void Start()
     {
-        UpdateUIInventory();
+        SetStartingItems();
     }
 
     private void OnValidate()
@@ -33,17 +46,43 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    private void InvokeOnItemRightClickEvent(Item item)
+    private void InvokeOnItemRightClickEvent(ItemSlot itemSlot)
     {
-        OnItemRightClickEvent?.Invoke(item);
+        OnItemRightClickEvent?.Invoke(itemSlot);
     }
-    private void UpdateUIInventory()
+
+    private void InvokeOnItemPointerEnterEvent(ItemSlot itemSlot)
+    {
+        OnItemPointerEnterEvent?.Invoke(itemSlot);
+    }
+    private void InvokeOnItemPointerExitEvent(ItemSlot itemSlot)
+    {
+        OnItemPointerExitEvent?.Invoke(itemSlot);
+    }
+    private void InvokeOnItemBeginDragEvent(ItemSlot itemSlot)
+    {
+        OnItemBeginDragEvent?.Invoke(itemSlot);
+    }
+    private void InvokeOnItemEndDragEvent(ItemSlot itemSlot)
+    {
+        OnItemEndDragEvent?.Invoke(itemSlot);
+    }
+    private void InvokeOnItemDragEvent(ItemSlot itemSlot)
+    {
+        OnItemDragEvent?.Invoke(itemSlot);
+    }
+    private void InvokeOnItemDropEvent(ItemSlot itemSlot)
+    {
+        OnItemDropEvent?.Invoke(itemSlot);
+    }
+
+    private void SetStartingItems()
     {
         int i = 0;
 
-        for (;i<items.Count && i< itemSlots.Length; i++)
+        for (;i<startingItems.Count && i< itemSlots.Length; i++)
         {
-            itemSlots[i].Item = items[i];
+            itemSlots[i].Item = startingItems[i];
         }
 
         for(; i < itemSlots.Length; i++)
@@ -53,29 +92,40 @@ public class Inventory : MonoBehaviour
     }
     public bool IsAbleToRemoveItem(Item item)
     {
-        if (items.Remove(item))
+        for (int i = 0; i < itemSlots.Length; i++)
         {
-            UpdateUIInventory();
-            return true;
+            if (itemSlots[i].Item == item)
+            {
+                itemSlots[i].Item = null;
+                return true;
+            }
         }
         return false;
     } 
 
     public bool IsInventoryFull()
     {
-        return items.Count >= itemSlots.Length;
+        for (int i = 0; i < itemSlots.Length; i++)
+        {
+            if (itemSlots[i].Item == null)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     public bool IsAbleToAddItem(Item item)
     {
-        if (IsFull)
+        for(int i = 0; i < itemSlots.Length; i++)
         {
-            return false;
+            if(itemSlots[i].Item == null)
+            {
+                itemSlots[i].Item = item;
+                return true;
+            }
         }
-
-        items.Add(item);
-        UpdateUIInventory();
-        return true;
+        return false;
     }
 
 }

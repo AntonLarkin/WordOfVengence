@@ -8,19 +8,59 @@ public class EquipmentPanel : MonoBehaviour
     [SerializeField] private Transform equipmentSlotsParent;
     [SerializeField] private EquipmentSlot[] equipmentSlots;
 
-    public event Action<Item> OnItemRightClickEvent;
+
+    public EquipmentSlot[] EquipmentSlots => equipmentSlots;
+
+    public event Action<ItemSlot> OnItemRightClickEvent;
+    public event Action<ItemSlot> OnItemPointerEnterEvent;
+    public event Action<ItemSlot> OnItemPointerExitEvent;
+    public event Action<ItemSlot> OnItemBeginDragEvent;
+    public event Action<ItemSlot> OnItemEndDragEvent;
+    public event Action<ItemSlot> OnItemDragEvent;
+    public event Action<ItemSlot> OnItemDropEvent;
 
     private void OnEnable()
     {
         for (int i = 0; i < equipmentSlots.Length; i++)
         {
             equipmentSlots[i].OnRightClickEvent += InvokeOnItemRightClickEvent;
+            equipmentSlots[i].OnPointerEnterEvent += InvokeOnItemPointerEnterEvent;
+            equipmentSlots[i].OnPointerExitEvent += InvokeOnItemPointerExitEvent;
+            equipmentSlots[i].OnBeginDragEvent += InvokeOnItemBeginDragEvent;
+            equipmentSlots[i].OnEndDragEvent += InvokeOnItemEndDragEvent;
+            equipmentSlots[i].OnDragEvent += InvokeOnItemDragEvent;
+            equipmentSlots[i].OnDropEvent += InvokeOnItemDropEvent;
         }
     }
 
-    private void  InvokeOnItemRightClickEvent(Item item)
+    private void InvokeOnItemRightClickEvent(ItemSlot itemSlot)
     {
-        OnItemRightClickEvent?.Invoke(item);
+        OnItemRightClickEvent?.Invoke(itemSlot);
+    }
+
+    private void InvokeOnItemPointerEnterEvent(ItemSlot itemSlot)
+    {
+        OnItemPointerEnterEvent?.Invoke(itemSlot);
+    }
+    private void InvokeOnItemPointerExitEvent(ItemSlot itemSlot)
+    {
+        OnItemPointerExitEvent?.Invoke(itemSlot);
+    }
+    private void InvokeOnItemBeginDragEvent(ItemSlot itemSlot)
+    {
+        OnItemBeginDragEvent?.Invoke(itemSlot);
+    }
+    private void InvokeOnItemEndDragEvent(ItemSlot itemSlot)
+    {
+        OnItemEndDragEvent?.Invoke(itemSlot);
+    }
+    private void InvokeOnItemDragEvent(ItemSlot itemSlot)
+    {
+        OnItemDragEvent?.Invoke(itemSlot);
+    }
+    private void InvokeOnItemDropEvent(ItemSlot itemSlot)
+    {
+        OnItemDropEvent?.Invoke(itemSlot);
     }
 
     private void OnValidate()
@@ -55,4 +95,5 @@ public class EquipmentPanel : MonoBehaviour
         }
         return false;
     }
+
 }

@@ -34,11 +34,6 @@ public class StatPanel : MonoBehaviour
                 statDisplays[i].Stat = stats[i];
             }
         }
-
-        for (int i = 0; i < characterStats.Length; i++)
-        {
-            characterStats[i].SetDefaultValue(10);
-        }
     }
 
     public void UpdateStatValues()
@@ -55,5 +50,10 @@ public class StatPanel : MonoBehaviour
         {
             statDisplays[i].Name = statNames[i];
         }
+    }
+
+    public float GetStatValue(Stat stat)
+    {
+        return stat.GetFinalValue();
     }
 }

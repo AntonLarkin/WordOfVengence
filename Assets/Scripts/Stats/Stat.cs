@@ -81,6 +81,11 @@ namespace CharacterStat
             BaseValue = defaultValue;
         }
 
+        public virtual float GetFinalValue()
+        {
+            return CalculateFinalValue();
+        }
+
         protected virtual int CompareModifiersOrder(StatModifier a, StatModifier b)
         {
             if (a.Order < b.Order)

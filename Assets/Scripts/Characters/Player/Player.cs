@@ -14,7 +14,14 @@ public class Player : BaseHuman
     }
 
     [SerializeField] private CameraRaycast cameraRaycast;
-    [SerializeField] private GameObject playerWeapon;
+    [SerializeField] private GameObject playerWeapon1;
+    [SerializeField] private GameObject playerWeapon2;
+    [SerializeField] private GameObject bonusWeapon;
+
+    [SerializeField] private Inventory inventory;
+    [SerializeField] private InventoryManager inventoryManager;
+    [SerializeField] private EquipmentPanel ep;
+
     [SerializeField] private float attackDistance;
     [SerializeField] private float escapeTime;
 
@@ -46,6 +53,7 @@ public class Player : BaseHuman
     private bool isFighting;
     private bool isCollecting;
     private bool isAgressive;
+    private bool isTired;
     private PlayerStateMachine stateMachine;
     private State currentState;
     private EnemyFinder enemyFinder;
@@ -89,25 +97,30 @@ public class Player : BaseHuman
         destinationInfo.point = transform.position;
         navMeshAgent.autoRepath = true;
         isAlive = true;
-        
+
 
         SetState(State.Idle);
 
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag(Tags.Item)&&isCollecting)
+        if (other.CompareTag(Tags.Item) && isCollecting)
         {
-             Destroy(other.gameObject);
-             isCollecting = false;
-             SetState(State.Idle);
+            var item = other.GetComponent<ItemCollector>().GetItem();
+            isCollecting = false;
+            inventory.IsAbleToAddItem(item);
+            SetState(State.Idle);
+            Destroy(other.gameObject);
         }
     }
-
-    private void Update()
+    
+    protected override void Update()
     {
+        base.Update();
+
         if (isAlive)
         {
+            UpdateCurrentCondition();
             CheckState();
             UpdateCurrentState();
 
@@ -120,7 +133,7 @@ public class Player : BaseHuman
             {
                 CheckForSecondClick();
             }
-            
+
         }
     }
 
@@ -146,14 +159,14 @@ public class Player : BaseHuman
         }
 
         animator.SetBool(isAttackingBoolName, isPlayerAgressive);
-        playerWeapon.SetActive(isPlayerAgressive);
+        CheckForEquippedWeapon(isPlayerAgressive);
     }
 
     private void CheckState()
     {
         if (enemyFinder.ClosestBandit != null)
         {
-            if (Vector3.Distance(CachedTransform.position, enemyFinder.ClosestBandit.transform.position) <= attackDistance&&!IsEscaping)
+            if (Vector3.Distance(CachedTransform.position, enemyFinder.ClosestBandit.transform.position) <= attackDistance && !IsEscaping)
             {
                 Debug.Log("Attack");
                 SetState(State.Attack);
@@ -173,13 +186,17 @@ public class Player : BaseHuman
             Die();
             isAlive = false;
         }
-        else if (currentState == State.Move)
+        else if (currentState == State.Move && !isTired)
         {
             Move();
         }
-        else if (currentState == State.Attack)
+        else if (currentState == State.Attack && !isTired)
         {
             Attack();
+        }
+        else if(currentState == State.Idle)
+        {
+            Idle();
         }
     }
 
@@ -193,7 +210,6 @@ public class Player : BaseHuman
                     animator.SetBool(isRunningBoolName, false);
 
                     navMeshAgent.speed = walkingSpeed;
-                    Debug.Log("Idle");
                     break;
                 }
             case State.Move:
@@ -228,6 +244,19 @@ public class Player : BaseHuman
         currentState = newState;
     }
 
+    private void Idle()
+    {
+        if (CurrentStamina >= maxStamina)
+        {
+            return;
+        }
+        if (CurrentStamina > maxStamina * 0.25)
+        {
+            isTired = false;
+        }
+        CurrentStamina += CalculateStaminaExhaustion();
+    }
+
     private void Move()
     {
         if (enemyFinder.ClosestBandit != null)
@@ -244,6 +273,25 @@ public class Player : BaseHuman
         {
             SetState(State.Idle);
         }
+
+        if (navMeshAgent.speed == runningSpeed)
+        {
+            if (CurrentStamina <= 0)
+            {
+                isTired = true;
+                navMeshAgent.SetDestination(CachedTransform.position);
+                SetState(State.Idle);
+            }
+            CurrentStamina -= CalculateStaminaExhaustion();
+        }
+        else if (navMeshAgent.speed == walkingSpeed)
+        {
+            if (CurrentStamina >= maxStamina)
+            {
+                return;
+            }
+            CurrentStamina += CalculateStaminaExhaustion();
+        }
     }
 
     private void Attack()
@@ -257,8 +305,8 @@ public class Player : BaseHuman
                 animator.SetTrigger(attackTriggerName);
             }
         }
-        
-        if(enemyFinder.ClosestBandit==null)
+
+        if (enemyFinder.ClosestBandit == null)
         {
             SetState(State.Move);
         }
@@ -304,6 +352,42 @@ public class Player : BaseHuman
         isCoroutineDenied = false;
     }
 
+    private void CheckForEquippedWeapon(bool isPlayerAgressive)
+    {
+        if (ep.EquipmentSlots[EquipmentSlotsID.Weapon1EquipmentSlotID].Item == null &&
+            ep.EquipmentSlots[EquipmentSlotsID.Weapon2EquipmentSlotID].Item != null)
+        {
+            playerWeapon2.SetActive(isPlayerAgressive);
+        }
+        else if (ep.EquipmentSlots[EquipmentSlotsID.Weapon1EquipmentSlotID].Item != null &&
+            ep.EquipmentSlots[EquipmentSlotsID.Weapon2EquipmentSlotID].Item == null)
+        {
+            playerWeapon1.SetActive(isPlayerAgressive);
+        }
+        else if (ep.EquipmentSlots[EquipmentSlotsID.Weapon1EquipmentSlotID].Item == null &&
+            ep.EquipmentSlots[EquipmentSlotsID.Weapon2EquipmentSlotID].Item == null)
+        {
+            Debug.Log("Find a weapon");
+        }
+        else if (ep.EquipmentSlots[EquipmentSlotsID.Weapon1EquipmentSlotID].Item != null &&
+            ep.EquipmentSlots[EquipmentSlotsID.Weapon2EquipmentSlotID].Item != null)
+        {
+            bonusWeapon.SetActive(isPlayerAgressive);
+            playerWeapon2.SetActive(isPlayerAgressive);
+        }
+    }
+
+    private void UpdateCurrentCondition()
+    {
+        maxHealth = inventoryManager.Vitality.GetFinalValue();
+        maxStamina = inventoryManager.Agility.GetFinalValue();
+    }
+
+    private float CalculateStaminaExhaustion()
+    {
+        return 25f/inventoryManager.Agility.GetFinalValue();
+    }
+
     private IEnumerator OnEscape()
     {
         yield return new WaitForSeconds(escapeTime);
@@ -320,7 +404,7 @@ public class Player : BaseHuman
 
     private void CameraRaycast_OnPlayerMove(Vector3 endPosition)
     {
-        if (isAlive)
+        if (isAlive && !isTired)
         {
             destinationInfo.point = endPosition;
             SetState(State.Move);
@@ -339,7 +423,7 @@ public class Player : BaseHuman
         {
             navMeshAgent.SetDestination(enemyFinder.ClosestBandit.CachedTransform.position);
         }
-        
+
     }
 
     private void CameraRaycast_OnPlayerInteract(Vector3 endPosition)

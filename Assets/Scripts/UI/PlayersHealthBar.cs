@@ -11,17 +11,19 @@ public class PlayersHealthBar : MonoBehaviour
 
     private float maxHealth;
     private float maxStamina;
-    private float currentHealt;
+    private float currentHealth;
     private float currentStamina;
 
     private void Start()
     {
-        maxHealth = player.MaxHealth;
-        maxStamina = player.MaxStamina;
+        
     }
 
     private void Update()
     {
+        maxHealth = player.MaxHealth;
+        maxStamina = player.MaxStamina;
+
         ChangeHealth();
         ChangeStamina();
     }
@@ -35,9 +37,9 @@ public class PlayersHealthBar : MonoBehaviour
 
     private void ChangeHealth()
     {
-        currentHealt = player.CurrentHealth;
+        currentHealth = player.CurrentHealth;
 
-        healthBarImage.fillAmount = currentHealt / maxHealth;
+        healthBarImage.fillAmount = currentHealth / maxHealth;
     }
 
 }
