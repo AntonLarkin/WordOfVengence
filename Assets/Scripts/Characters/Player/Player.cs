@@ -162,6 +162,19 @@ public class Player : BaseHuman
         CheckForEquippedWeapon(isPlayerAgressive);
     }
 
+    public void HealPlayer(float healValue)
+    {
+        if (CurrentHealth >= maxHealth)
+        {
+            return;
+        }
+        CurrentHealth += healValue;
+        if (CurrentHealth >= maxHealth)
+        {
+            CurrentHealth = maxHealth;
+        }
+    }
+
     private void CheckState()
     {
         if (enemyFinder.ClosestBandit != null)

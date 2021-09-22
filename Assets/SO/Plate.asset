@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19338bb7adfde14428a9bb48b68e9021, type: 3}
   m_Name: Plate
   m_EditorClassIdentifier: 
+  id: 6b7a4fa7a798fc74980eec6caa353ea6
   ItemName: Plate
   Icon: {fileID: 21300000, guid: bdfd210bfe26aed41a6a63c7b4dcfe8f, type: 3}
+  MaximumStackValue: 5

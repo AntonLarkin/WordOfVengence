@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8df9e92e730b2744392b6767c6aa155b, type: 3}
   m_Name: Armor (chest2)
   m_EditorClassIdentifier: 
+  id: 99fd46e6e0b84a94d85c81787fdbd1d7
   ItemName: Armor chest2
   Icon: {fileID: 21300000, guid: c99ff72e45210154189d184c384a0930, type: 3}
+  MaximumStackValue: 1
   StrengthBonus: 0
   AgilityBonus: 0
   VitalityBonus: 50
   StrengthPercentBonus: 0
   AgilityPercentBonus: -0.2
   VitalityPercentBonus: 0
-  EqipmentType: 1
+  EquipmentType: 1

@@ -1,5 +1,7 @@
 using CharacterStat;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +11,8 @@ public class InventoryManager : MonoBehaviour
     public Stat Agility;
     public Stat Vitality;
 
+    [SerializeField] private Player player;
+
     [SerializeField] private Inventory inventory;
     [SerializeField] private EquipmentPanel equipmentPanel;
     [SerializeField] private StatPanel statPanel;
@@ -17,12 +21,18 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private Image draggableItem;
 
     private ItemSlot draggedSlot;
+    private bool isItemConsumed;
 
     private void OnValidate()
     {
         if (itemTooltip == null)
         {
             itemTooltip = FindObjectOfType<ItemTooltip>();
+        }
+
+        if(player == null)
+        {
+            player = FindObjectOfType<Player>();
         }
     }
 
@@ -36,8 +46,8 @@ public class InventoryManager : MonoBehaviour
     private void OnEnable()
     {
         //RightClick
-        inventory.OnItemRightClickEvent += Equip;
-        equipmentPanel.OnItemRightClickEvent += Unequip;
+        inventory.OnItemRightClickEvent += InventoryRightClick;
+        equipmentPanel.OnItemRightClickEvent += EquipmentPanelRightClick;
         //Pointer Enter
         inventory.OnItemPointerEnterEvent += ShowTooltip;
         equipmentPanel.OnItemPointerEnterEvent += ShowTooltip;
@@ -92,29 +102,49 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    private void Equip(ItemSlot itemSlot)
+    private void InventoryRightClick(ItemSlot itemSlot)
     {
-        EquipableItem equipableItem = itemSlot.Item as EquipableItem;
-        if (equipableItem != null)
+        if(itemSlot.Item is EquipableItem)
         {
-            Equip(equipableItem);
+            Equip((EquipableItem)itemSlot.Item);
         }
-    }
-    private void Unequip(ItemSlot itemSlot)
-    {
-        EquipableItem equipableItem = itemSlot.Item as EquipableItem;
-        if (equipableItem != null)
+        else if(itemSlot.Item is UsableItem && !isItemConsumed)
         {
-            Unequip(equipableItem);
+            Debug.Log(itemSlot.Amount);
+            UsableItem usableItem = (UsableItem)itemSlot.Item;
+            usableItem.Use(player);
+
+            isItemConsumed = true;
+            if (usableItem.IsConsumable)
+            {
+                if (itemSlot.Amount > 1)
+                {
+                    itemSlot.Amount--;
+                }
+                else
+                {
+                    inventory.IsAbleToRemoveItem(usableItem);
+                    usableItem.Destroy();
+                }
+            }
+
+            StartCoroutine(OnReload());
+        }
+
+    }
+    private void EquipmentPanelRightClick(ItemSlot itemSlot)
+    {
+        if (itemSlot.Item is EquipableItem)
+        {
+            Unequip((EquipableItem)itemSlot.Item);
         }
     }
 
     private void ShowTooltip(ItemSlot itemSlot)
     {
-        EquipableItem equipableItem = itemSlot.Item as EquipableItem;
-        if (equipableItem != null)
+        if (itemSlot.Item != null)
         {
-            itemTooltip.ShowTooltip(equipableItem);
+            itemTooltip.ShowTooltip(itemSlot.Item);
         }
     }
 
@@ -124,6 +154,11 @@ public class InventoryManager : MonoBehaviour
     }
     private void Drop(ItemSlot itemSlot)
     {
+        if (draggedSlot == null)
+        {
+            return;
+        }
+
         if (itemSlot.CanRecieveItem(draggedSlot.Item) && draggedSlot.CanRecieveItem(itemSlot.Item))
         {
             EquipableItem dragItem = draggedSlot.Item as EquipableItem;
@@ -143,9 +178,13 @@ public class InventoryManager : MonoBehaviour
             statPanel.UpdateStatValues();
 
             Item draggedItem = draggedSlot.Item;
-            draggedSlot.Item = itemSlot.Item;
-            itemSlot.Item = draggedItem;
+            int draggedItemAmount = draggedSlot.Amount;
 
+            draggedSlot.Item = itemSlot.Item;
+            draggedSlot.Amount = itemSlot.Amount;
+
+            itemSlot.Item = draggedItem;
+            itemSlot.Amount = draggedItemAmount;
         }
     }
 
@@ -172,5 +211,12 @@ public class InventoryManager : MonoBehaviour
             draggableItem.transform.position = Input.mousePosition;
             draggableItem.enabled = true;
         }
+    }
+
+    private IEnumerator OnReload()
+    {
+        yield return new WaitForEndOfFrame();
+
+        isItemConsumed = false;
     }
 }

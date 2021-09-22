@@ -24,7 +24,17 @@ public class EquipableItem : Item
     public float  VitalityPercentBonus;
 
     [Space]
-    public EquipmentType EqipmentType;
+    public EquipmentType EquipmentType;
+
+    public override Item GetCopy()
+    {
+        return Instantiate(this);
+    }
+
+    public override void Destroy()
+    {
+        Destroy(this);
+    }
 
     public void Equip(InventoryManager character)
     {
@@ -62,5 +72,50 @@ public class EquipableItem : Item
         character.Vitality.RemoveAllModifiersFromSource(this);
     }
 
+    public override string GetItemType()
+    {
+        return EquipmentType.ToString();
+    }
+
+    public override string GetDescription()
+    {
+        sb.Length = 0;
+        AddStat(StrengthBonus, "Strength");
+        AddStat(AgilityBonus, "Agility");
+        AddStat(VitalityBonus, "Vitality");
+
+        AddStat(StrengthPercentBonus, "Strength", true);
+        AddStat(AgilityPercentBonus, "Agility", true);
+        AddStat(VitalityPercentBonus, "Vitality", true);
+        return sb.ToString();
+    }
+
+    private void AddStat(float value, string statName, bool isPercent = false)
+    {
+        if (value != 0)
+        {
+            if (sb.Length > 0)
+            {
+                sb.AppendLine();
+            }
+            if (value > 0)
+            {
+                sb.Append("+");
+            }
+
+            if (isPercent)
+            {
+                sb.Append(value * 100);
+                sb.Append("%  ");
+            }
+            else
+            {
+                sb.Append(value);
+                sb.Append("  ");
+            }
+
+            sb.Append(statName);
+        }
+    }
 }
 

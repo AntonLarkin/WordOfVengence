@@ -82,12 +82,14 @@ public class Inventory : MonoBehaviour
 
         for (;i<startingItems.Count && i< itemSlots.Length; i++)
         {
-            itemSlots[i].Item = startingItems[i];
+            itemSlots[i].Item = startingItems[i].GetCopy();
+            itemSlots[i].Amount = 1;
         }
 
         for(; i < itemSlots.Length; i++)
         {
             itemSlots[i].Item = null;
+            itemSlots[i].Amount = 0;
         }
     }
     public bool IsAbleToRemoveItem(Item item)
@@ -96,12 +98,34 @@ public class Inventory : MonoBehaviour
         {
             if (itemSlots[i].Item == item)
             {
-                itemSlots[i].Item = null;
+                itemSlots[i].Amount--;
+                if (itemSlots[i].Amount <= 0)
+                {
+                    itemSlots[i].Item = null;
+                }
                 return true;
             }
         }
         return false;
     } 
+
+    public Item RemoveItem(string itemID)
+    {
+        for(int i = 0; i < itemSlots.Length; i++)
+        {
+            Item item = itemSlots[i].Item;
+            if(item!=null && item.ID == itemID)
+            {
+                itemSlots[i].Amount--;
+                if (itemSlots[i].Amount <= 0)
+                {
+                    itemSlots[i].Item = null;
+                }
+                return item;
+            }
+        }
+        return null;
+    }
 
     public bool IsInventoryFull()
     {
@@ -119,9 +143,10 @@ public class Inventory : MonoBehaviour
     {
         for(int i = 0; i < itemSlots.Length; i++)
         {
-            if(itemSlots[i].Item == null)
+            if(itemSlots[i].Item == null || (itemSlots[i].Item.ID ==item.ID && itemSlots[i].Amount<item.MaximumStackValue))
             {
                 itemSlots[i].Item = item;
+                itemSlots[i].Amount++;
                 return true;
             }
         }

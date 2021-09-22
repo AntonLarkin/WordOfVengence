@@ -6,6 +6,7 @@ using System;
 public class ItemSlot : MonoBehaviour , IPointerClickHandler , IPointerEnterHandler , IPointerExitHandler, IBeginDragHandler, IEndDragHandler,IDragHandler,IDropHandler
 {
     [SerializeField] private Image image;
+    [SerializeField] private Text amountText;
 
     public event Action<ItemSlot> OnRightClickEvent;
     public event Action<ItemSlot> OnPointerEnterEvent;
@@ -39,11 +40,34 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler , IPointerEnterHand
         }
     }
 
+    public int _amount;
+    public int Amount
+    {
+        get
+        {
+            return _amount;
+        }
+        set
+        {
+            _amount = value;
+            amountText.enabled = item != null && item.MaximumStackValue > 1 && _amount > 1;
+            if (amountText.enabled)
+            {
+                amountText.text = _amount.ToString();
+            }
+        }
+    }
+
     protected virtual void OnValidate()
     {
         if (image == null)
         {
             image = GetComponent<Image>();
+        }
+
+        if (amountText == null)
+        {
+            amountText = GetComponentInChildren<Text>();
         }
 
     }

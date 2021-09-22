@@ -12,12 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8df9e92e730b2744392b6767c6aa155b, type: 3}
   m_Name: Armor (boots)
   m_EditorClassIdentifier: 
+  id: b5c7c5ca97ee0fa4bbb6926663325ce3
   ItemName: Old Boots
   Icon: {fileID: 21300000, guid: c4e66b76f139f7f4ca934b2cc51c0585, type: 3}
+  MaximumStackValue: 1
   StrengthBonus: 0
   AgilityBonus: 0
   VitalityBonus: 5
   StrengthPercentBonus: 0
   AgilityPercentBonus: 0
   VitalityPercentBonus: 0
-  EqipmentType: 3
+  EquipmentType: 3

@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19338bb7adfde14428a9bb48b68e9021, type: 3}
   m_Name: Money
   m_EditorClassIdentifier: 
+  id: 27f6b847e3921dc48bcfa4d27bb32382
   ItemName: Money
   Icon: {fileID: 21300000, guid: be07af55a39cfeb478268910d16ccd16, type: 3}
+  MaximumStackValue: 100

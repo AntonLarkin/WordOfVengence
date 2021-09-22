@@ -22,6 +22,6 @@ public class EquipmentSlot : ItemSlot
         }
 
         EquipableItem equipableItem = item as EquipableItem;
-        return equipableItem != null && equipableItem.EqipmentType == EquipmentType;
+        return equipableItem != null && equipableItem.EquipmentType == EquipmentType;
     }
 }

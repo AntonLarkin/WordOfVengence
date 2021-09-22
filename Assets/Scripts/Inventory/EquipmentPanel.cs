@@ -72,7 +72,7 @@ public class EquipmentPanel : MonoBehaviour
     {
         for(int i = 0; i < equipmentSlots.Length; i++)
         {
-            if(equipmentSlots[i].EquipmentType == equipableItem.EqipmentType)
+            if(equipmentSlots[i].EquipmentType == equipableItem.EquipmentType)
             {
                 alreadyUsedItem = (EquipableItem)equipmentSlots[i].Item;
                 equipmentSlots[i].Item = equipableItem;
