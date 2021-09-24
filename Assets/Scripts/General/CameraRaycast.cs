@@ -12,7 +12,8 @@ public class CameraRaycast : MonoBehaviour
 
     private RaycastHit destinationInfo;
 
-    private bool isRaicastingActive = true;
+    private bool isInventaryOpened;
+    private bool isQuestViewOpened;
 
     public event Action<Vector3> OnPlayerMove;
     public event Action OnPlayerStop;
@@ -23,16 +24,20 @@ public class CameraRaycast : MonoBehaviour
     {
         UiManager.OnOpenInventory += UiManager_OnOpenInventory;
         UiManager.OnClosedInventory += UiManager_OnClosedInventory;
+        UiManager.OnOpenQuestView += UiManager_OnOpenQuestView;
+        UiManager.OnClosedQuestView += UiManager_OnClosedQuestView;
     }
     private void OnDisable()
     {
         UiManager.OnOpenInventory -= UiManager_OnOpenInventory;
         UiManager.OnClosedInventory -= UiManager_OnClosedInventory;
+        UiManager.OnOpenQuestView -= UiManager_OnOpenQuestView;
+        UiManager.OnClosedQuestView -= UiManager_OnClosedQuestView;
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0)&&isRaicastingActive)
+        if (Input.GetMouseButtonDown(0)&&!isQuestViewOpened&&!isInventaryOpened)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -62,11 +67,21 @@ public class CameraRaycast : MonoBehaviour
 
     private void UiManager_OnOpenInventory()
     {
-        isRaicastingActive = false;
+        isInventaryOpened = true;
     }
     private void UiManager_OnClosedInventory()
     {
-        isRaicastingActive = true;
+        isInventaryOpened = false;
+    }
+
+    private void UiManager_OnOpenQuestView()
+    {
+        isQuestViewOpened = true;
+    }
+
+    private void UiManager_OnClosedQuestView()
+    {
+        isQuestViewOpened = false;
     }
 
 }

@@ -109,6 +109,7 @@ public class Player : BaseHuman
             var item = other.GetComponent<ItemCollector>().GetItem();
             isCollecting = false;
             inventory.IsAbleToAddItem(item);
+            other.GetComponent<ItemCollector>().QuestItemCollector();
             SetState(State.Idle);
             Destroy(other.gameObject);
         }

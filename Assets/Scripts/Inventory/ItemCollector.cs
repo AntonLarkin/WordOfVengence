@@ -11,4 +11,31 @@ public class ItemCollector : MonoBehaviour
         return item;
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag(Tags.Player))
+        {
+            //QuestItemCollector();
+        }
+    }
+
+    public void QuestItemCollector()
+    {
+        var qm = QuestManager.questManager;
+        for(int i = 0; i < qm.currentQuests.Count; i++)
+        {
+            if(item == qm.currentQuests[i].questItem)
+            {
+                if(qm.currentQuests[i].questObjectiveCount < qm.currentQuests[i].questObjectiveRequirment)
+                {
+                    qm.AddQuestItem(qm.currentQuests[i].questId,1);
+                }
+                else
+                {
+                    qm.CompleteQuest(qm.currentQuests[i].questId);
+                }
+            }
+        }
+    }
+
 }

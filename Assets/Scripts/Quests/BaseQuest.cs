@@ -22,6 +22,8 @@ public class BaseQuest
     public string acomplishmentMessage;
 
     public string questObjective;
+    public ScriptableObject questItem;
+    public GameObject[] killTargets;
     public int questObjectiveCount;
     public int questObjectiveRequirment;
 

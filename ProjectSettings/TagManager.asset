@@ -7,6 +7,8 @@ TagManager:
   - Enemy
   - Weapon
   - Item
+  - NPC
+  - TriggerPoint
   layers:
   - Default
   - TransparentFX
@@ -21,8 +23,8 @@ TagManager:
   - Player Weapon
   - Player
   - Item
-  - 
-  - 
+  - NPC
+  - TriggerPoint
   - 
   - 
   - 
