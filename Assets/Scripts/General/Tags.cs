@@ -5,4 +5,5 @@ public static class Tags
     public const string Item = "Item";
     public const string Npc = "NPC";
     public const string TriggerPoint = "TriggerPoint";
+    public const string ItemKeeper = "ItemKeeper";
 }

@@ -66,11 +66,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2265d0af82a3d774999b06667dc3a3c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 0
   maxHealth: 100
   maxStamina: 100
-  inventory: {fileID: 11400000, guid: 606e546341eecbb41b5f4de01780c6f0, type: 2}
   cameraRaycast: {fileID: 0}
-  playerWeapon: {fileID: 6545729316554153588}
+  playerWeapon1: {fileID: 0}
+  playerWeapon2: {fileID: 0}
+  bonusWeapon: {fileID: 0}
+  inventory: {fileID: 0}
+  inventoryManager: {fileID: 0}
+  ep: {fileID: 0}
   attackDistance: 2
   escapeTime: 1
   isWalkingBoolName: isWalking
@@ -181,6 +186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageValue: 30
   staminaCost: 30
+  inventoryManager: {fileID: 0}
 --- !u!1001 &6544657491738890032
 PrefabInstance:
   m_ObjectHideFlags: 0

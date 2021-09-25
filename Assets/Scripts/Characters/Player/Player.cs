@@ -113,11 +113,30 @@ public class Player : BaseHuman
             SetState(State.Idle);
             Destroy(other.gameObject);
         }
+        if (other.CompareTag(Tags.ItemKeeper) && isCollecting)
+        {
+            var items = other.GetComponent<ItemKeeper>().CollectItems();
+            isCollecting = false;
+            if (items != null)
+            {
+                for (int i = 0; i < items.Length; i++)
+                {
+                    inventory.IsAbleToAddItem(items[i]);
+                }
+                other.GetComponent<ItemKeeper>().CleanItemKeeper();
+            }
+            SetState(State.Idle);
+        }
     }
     
     protected override void Update()
     {
         base.Update();
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            CameraController.instance.followTransform = CachedTransform;
+        }
 
         if (isAlive)
         {
@@ -383,11 +402,12 @@ public class Player : BaseHuman
         {
             Debug.Log("Find a weapon");
         }
-        else if (ep.EquipmentSlots[EquipmentSlotsID.Weapon1EquipmentSlotID].Item != null &&
+        if (ep.EquipmentSlots[EquipmentSlotsID.Weapon1EquipmentSlotID].Item != null &&
             ep.EquipmentSlots[EquipmentSlotsID.Weapon2EquipmentSlotID].Item != null)
         {
             bonusWeapon.SetActive(isPlayerAgressive);
             playerWeapon2.SetActive(isPlayerAgressive);
+            playerWeapon1.SetActive(false);
         }
     }
 

@@ -11,7 +11,7 @@ public class QuestGiver : MonoBehaviour
     public List<int> availableQuestIDs = new List<int>();
     public List<int> receivableQuestIDs = new List<int>();
 
-    public bool isQuestReadyToBeDone;
+    [SerializeField] private bool isQuestGiverFinishesQuest;
 
     [SerializeField] private Dialog dialog;
 

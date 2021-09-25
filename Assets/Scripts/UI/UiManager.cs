@@ -6,9 +6,12 @@ public class UiManager : MonoBehaviour
     [SerializeField] private GameObject conditionView;
     [SerializeField] private GameObject inventoryView;
     [SerializeField] private QuestUIManager questsView;
+    [SerializeField] private GameObject pauseView;
 
     private bool isInventoryViewActive;
     private bool isQuestViewActive;
+
+    private bool isPaused;
 
     public static event Action OnOpenInventory;
     public static event Action OnClosedInventory;
@@ -24,15 +27,29 @@ public class UiManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown(KeyCode.I) && !isPaused)
         {
             ToggleInventoryView(isInventoryViewActive);
         }
 
-        if (Input.GetKeyDown(KeyCode.J))
+        if (Input.GetKeyDown(KeyCode.J) && !isPaused)
         {
             isQuestViewActive = questsView.isQuestPanelActive;
             ToggleQuestView(isQuestViewActive);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (pauseView.activeSelf)
+            {
+                TogglePauseView(false);
+                Time.timeScale = 1;
+            }
+            else
+            {
+                TogglePauseView(true);
+                Time.timeScale = 0;
+            }
         }
 
         if (questsView.isQuestPanelActive)
@@ -45,6 +62,12 @@ public class UiManager : MonoBehaviour
         }
 
 
+    }
+
+    private void TogglePauseView(bool isActive)
+    {
+        pauseView.SetActive(isActive);
+        isPaused = isActive;
     }
 
     private void ToggleInventoryView(bool isActive)

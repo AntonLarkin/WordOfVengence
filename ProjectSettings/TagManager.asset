@@ -9,6 +9,7 @@ TagManager:
   - Item
   - NPC
   - TriggerPoint
+  - ItemKeeper
   layers:
   - Default
   - TransparentFX
@@ -25,8 +26,8 @@ TagManager:
   - Item
   - NPC
   - TriggerPoint
-  - 
-  - 
+  - Post Processing
+  - ItemKeeper
   - 
   - 
   - 

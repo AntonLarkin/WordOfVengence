@@ -48,7 +48,6 @@ public class CameraRaycast : MonoBehaviour
 
             else if (Physics.Raycast(ray, out destinationInfo, Mathf.Infinity, enemy))
             {
-                
                 OnPlayerAttack?.Invoke(destinationInfo.point);
             }
             else if (Physics.Raycast(ray, out destinationInfo, Mathf.Infinity, item))

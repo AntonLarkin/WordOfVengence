@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed70ec8e49817544f8c9cdc026ff4e5b, type: 3}
   m_Name: HealingFromFoodEffect
   m_EditorClassIdentifier: 
-  HealthAmount: 5
+  HealthAmount: 10

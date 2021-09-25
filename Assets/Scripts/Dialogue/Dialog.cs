@@ -13,7 +13,7 @@ public class Dialog : MonoBehaviour
 
     private int index;
     private bool isDialogfinished;
-    private const float timeDelay = 0.03f;
+    private const float timeDelay = 0.015f;
 
     public int Index => index;
     public bool IsDialogFinished => isDialogfinished;

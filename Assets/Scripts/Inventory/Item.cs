@@ -16,11 +16,11 @@ public class Item : ScriptableObject
 
     public string ID => id;
 
-    private void OnValidate()
-    {
-        string path = AssetDatabase.GetAssetPath(this);
-        id = AssetDatabase.AssetPathToGUID(path);
-    }
+    //private void OnValidate()
+    //{
+    //    string path = AssetDatabase.GetAssetPath(this);
+    //    id = AssetDatabase.AssetPathToGUID(path);
+    //}
 
     public virtual Item GetCopy()
     {

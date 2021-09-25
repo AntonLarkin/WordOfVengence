@@ -25,14 +25,26 @@ public class QuestManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    private void Update()
+    {
+        for(int i = 0; i < currentQuests.Count; i++)
+        {
+            if(currentQuests[i].questObjectiveCount>= currentQuests[i].questObjectiveRequirment &&
+                currentQuests[i].questProgression == BaseQuest.QuestProgression.Accepted)
+            {
+                CompleteQuest(currentQuests[i].questId);
+            }
+        }
+    }
+
     public void AcceptQuest(int questId)
     {
-        for(int i = 0; i < quests.Count; i++)
+        for (int i = 0; i < quests.Count; i++)
         {
             if (quests[i].questId == questId && quests[i].questProgression == BaseQuest.QuestProgression.Available)
             {
                 currentQuests.Add(quests[i]);
-                for(int j = 0; j < currentQuests.Count; j++)
+                for (int j = 0; j < currentQuests.Count; j++)
                 {
                     currentQuests[j].questProgression = BaseQuest.QuestProgression.Accepted;
                 }
@@ -42,39 +54,35 @@ public class QuestManager : MonoBehaviour
 
     public void CompleteQuest(int questId)
     {
-        for(int i = 0; i < currentQuests.Count; i++)
+        for (int i = 0; i < currentQuests.Count; i++)
         {
-            if(currentQuests[i].questId==questId && currentQuests[i].questProgression == BaseQuest.QuestProgression.Accepted)
+            if (currentQuests[i].questId == questId && currentQuests[i].questProgression == BaseQuest.QuestProgression.Accepted)
             {
-
                 currentQuests[i].questProgression = BaseQuest.QuestProgression.Completed;
-                //currentQuests.Remove(currentQuests[i]);
             }
         }
     }
 
     public void DoneQuest(int questId)
     {
-        for(int i = 0; i < currentQuests.Count; i++)
+        for (int i = 0; i < currentQuests.Count; i++)
         {
-            if(currentQuests[i].questId == questId && currentQuests[i].questProgression == BaseQuest.QuestProgression.Completed)
+            if (currentQuests[i].questId == questId && currentQuests[i].questProgression == BaseQuest.QuestProgression.Completed)
             {
                 if (currentQuests[i].questReward != null && currentQuests[i].questReward is Item)
                 {
                     inventory.IsAbleToAddItem((Item)currentQuests[i].questReward);
                 }
                 currentQuests.Remove(currentQuests[i]);
-                //quests[i].questProgression = BaseQuest.QuestProgression.Done;
-
             }
         }
     }
 
-    public void AddQuestItem(int questId,int itemAmount)
+    public void AddQuestItem(int questId, int itemAmount)
     {
-        for(int i = 0; i < currentQuests.Count; i++)
+        for (int i = 0; i < currentQuests.Count; i++)
         {
-            if(currentQuests[i].questId == questId && currentQuests[i].questProgression == BaseQuest.QuestProgression.Accepted)
+            if (currentQuests[i].questId == questId && currentQuests[i].questProgression == BaseQuest.QuestProgression.Accepted)
             {
                 currentQuests[i].questObjectiveCount += itemAmount;
             }
@@ -88,9 +96,9 @@ public class QuestManager : MonoBehaviour
         }
     }
 
-    public void IncreaseDeadEnemyCount(int questId,int killCountAmount)
+    public void IncreaseDeadEnemyCount(int questId, int killCountAmount)
     {
-        for(int i = 0; i < currentQuests.Count; i++)
+        for (int i = 0; i < currentQuests.Count; i++)
         {
             if (currentQuests[i].questId == questId && currentQuests[i].questProgression == BaseQuest.QuestProgression.Accepted)
             {
@@ -109,11 +117,11 @@ public class QuestManager : MonoBehaviour
     {
         if (questGiver.availableQuestIDs.Count > 0)
         {
-            for(int i = 0; i < quests.Count; i++)
+            for (int i = 0; i < quests.Count; i++)
             {
-                for(int j = 0; j < questGiver.availableQuestIDs.Count; j++)
+                for (int j = 0; j < questGiver.availableQuestIDs.Count; j++)
                 {
-                    if(quests[i].questId == questGiver.availableQuestIDs[j] && quests[i].questProgression == BaseQuest.QuestProgression.Available)
+                    if (quests[i].questId == questGiver.availableQuestIDs[j] && quests[i].questProgression == BaseQuest.QuestProgression.Available)
                     {
                         QuestUIManager.questUiManager.isQuestAvailable = true;
                         QuestUIManager.questUiManager.availableQuests.Add(quests[i]);
@@ -133,17 +141,12 @@ public class QuestManager : MonoBehaviour
                     }
                 }
             }
-
         }
-
-
     }
-
-
 
     public bool RequestAvailableQuest(int questId)
     {
-        for(int i = 0; i < quests.Count; i++)
+        for (int i = 0; i < quests.Count; i++)
         {
             if (quests[i].questId == questId && quests[i].questProgression == BaseQuest.QuestProgression.Available)
             {
@@ -152,6 +155,7 @@ public class QuestManager : MonoBehaviour
         }
         return false;
     }
+
     public bool RequestAcceptedQuest(int questId)
     {
         for (int i = 0; i < quests.Count; i++)
@@ -163,6 +167,7 @@ public class QuestManager : MonoBehaviour
         }
         return false;
     }
+
     public bool RequestCompletedQuest(int questId)
     {
         for (int i = 0; i < quests.Count; i++)
@@ -175,14 +180,13 @@ public class QuestManager : MonoBehaviour
         return false;
     }
 
-
     public bool CheckAvailableQuests(QuestGiver questGiver)
     {
-        for(int i = 0; i < quests.Count; i++)
+        for (int i = 0; i < quests.Count; i++)
         {
-            for(int j = 0; j < questGiver.availableQuestIDs.Count; j++)
+            for (int j = 0; j < questGiver.availableQuestIDs.Count; j++)
             {
-                if(quests[i].questId == questGiver.availableQuestIDs[j] && quests[i].questProgression == BaseQuest.QuestProgression.Available)
+                if (quests[i].questId == questGiver.availableQuestIDs[j] && quests[i].questProgression == BaseQuest.QuestProgression.Available)
                 {
                     return true;
                 }
