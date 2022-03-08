@@ -14,7 +14,7 @@ public class EnemyFinder : MonoBehaviour
 
     public BaseBandit ClosestBandit => closestBandit;
 
-    private void OnValidate()
+    private void Start()
     {
         DetectEnemiesOnLevel();
         player = FindObjectOfType<Player>();

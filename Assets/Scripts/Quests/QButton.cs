@@ -18,10 +18,10 @@ public class QButton : MonoBehaviour
 
     private void Start()
     {
-        acceptButton = GameObject.Find("Canvas").transform.FindChild("QuestView").transform.FindChild("Description").transform.FindChild("AcceptButton").gameObject;
+        acceptButton = GameObject.Find("Canvas").transform.Find("QuestView").transform.Find("Description").transform.Find("AcceptButton").gameObject;
         acceptButtonScript = acceptButton.GetComponent<QButton>();
 
-        completeButton = GameObject.Find("Canvas").transform.FindChild("QuestView").transform.FindChild("Description").transform.FindChild("CompleteButton").gameObject;
+        completeButton = GameObject.Find("Canvas").transform.Find("QuestView").transform.Find("Description").transform.Find("CompleteButton").gameObject;
         completeButtonScript = completeButton.GetComponent<QButton>();
 
         acceptButton.SetActive(false);
